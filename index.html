@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Classification Model</title>
+    <script>
+        function playBuzzer() {
+            var audio = new Audio('/static/buzzer.mp3');  // Replace 'buzzer.mp3' with the actual path to your buzzer sound file
+            audio.play();
+        }
+    </script>
+    <style>
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h1>Fire Detection</h1>
+<hr>
+<form action="/predict" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".jpg, .jpeg, .png" required>
+    <button type="submit" onclick="playBuzzer()">Predict</button>
+</form>
+
+{% if prediction %}
+{% if prediction is defined %}
+{% set confidence = prediction[0][0]*100 %}
+<!--<h2>Prediction: {{ confidence|round(2) }}%</h2>-->
+{% if confidence > 50 %}
+<h2>Fire</h2>
+<script>playBuzzer();</script>
+{% else %}
+<h2>Non-Fire</h2>
+{% endif %}
+{% if file %}
+<!--<img src="{{ url_for('static', filename='uploads' + file.filename) }}" alt="Uploaded Image" style="max-width: 300px;">-->
+{% endif %}
+{% else %}
+<p>Prediction is not available.</p>
+{% endif %}
+{% endif %}
+
+{% if error %}
+<p>Error: {{ error }}</p>
+{% endif %}
+</body>
+</html>
